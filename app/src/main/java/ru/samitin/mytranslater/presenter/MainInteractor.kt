@@ -1,4 +1,4 @@
-package ru.samitin.mytranslater.view.main
+package ru.samitin.mytranslater.presenter
 
 
 

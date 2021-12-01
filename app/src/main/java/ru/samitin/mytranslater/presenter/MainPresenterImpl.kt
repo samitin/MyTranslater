@@ -1,4 +1,4 @@
-package ru.samitin.mytranslater.view.main
+package ru.samitin.mytranslater.presenter
 
 
 
@@ -7,7 +7,6 @@ import io.reactivex.observers.DisposableObserver
 import ru.samitin.mytranslater.model.data.AppState
 import ru.samitin.mytranslater.model.datasource.DataSourceRemote
 import ru.samitin.mytranslater.model.repository.RepositoryImplementation
-import ru.samitin.mytranslater.presenter.Presenter
 import ru.samitin.mytranslater.rx.SchedulerProvider
 import ru.samitin.mytranslater.view.base.View
 import ru.samitin.mytranslaterr.model.datasource.DataSourceLocal

@@ -9,9 +9,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import ru.samitin.mytranslater.R
 
 import ru.samitin.mytranslater.databinding.ActivityMainBinding
-
 import ru.samitin.mytranslater.model.data.AppState
 import ru.samitin.mytranslater.model.data.DataModel
+import ru.samitin.mytranslater.presenter.MainPresenterImpl
 import ru.samitin.mytranslater.presenter.Presenter
 import ru.samitin.mytranslater.view.base.BaseActivity
 import ru.samitin.mytranslater.view.base.View
@@ -38,16 +38,20 @@ class MainActivity : BaseActivity<AppState>() {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        binding.searchFab.setOnClickListener {
-            val searchDialogFragment = SearchDialogFragment.newInstance()
-            searchDialogFragment.setOnSearchClickListener(object :
-                SearchDialogFragment.OnSearchClickListener {
-                override fun onClick(searchWord: String) {
-                    presenter.getData(searchWord, true)
-                }
-            })
-            searchDialogFragment.show(supportFragmentManager, BOTTOM_SHEET_FRAGMENT_DIALOG_TAG)
-        }
+        createSearchDialogFragment()
+    }
+    private fun createSearchDialogFragment(){
+        val searchDialogFragment = SearchDialogFragment.newInstance()
+        searchDialogFragment.setOnSearchClickListener(object :
+            SearchDialogFragment.OnSearchClickListener {
+            override fun onClick(searchWord: String) {
+                presenter.getData(searchWord, true)
+            }
+        })
+        supportFragmentManager
+            .beginTransaction()
+            .replace(binding.container.id,searchDialogFragment)
+            .commit()
     }
 
     override fun renderData(appState: AppState) {
