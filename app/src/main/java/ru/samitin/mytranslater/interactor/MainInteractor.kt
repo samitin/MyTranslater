@@ -1,4 +1,4 @@
-package ru.samitin.mytranslater.presenter
+package ru.samitin.mytranslater.interactor
 
 
 
@@ -6,7 +6,6 @@ import io.reactivex.Observable
 import ru.samitin.mytranslater.model.data.AppState
 import ru.samitin.mytranslater.model.data.DataModel
 import ru.samitin.mytranslater.model.repository.Repository
-import ru.samitin.mytranslater.presenter.Interactor
 
 class MainInteractor(
     private val remoteRepository: Repository<List<DataModel>>,

@@ -4,6 +4,8 @@ import android.os.Bundle
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.widget.Toast
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 
 import ru.samitin.mytranslater.R
@@ -11,14 +13,17 @@ import ru.samitin.mytranslater.R
 import ru.samitin.mytranslater.databinding.ActivityMainBinding
 import ru.samitin.mytranslater.model.data.AppState
 import ru.samitin.mytranslater.model.data.DataModel
-import ru.samitin.mytranslater.presenter.MainPresenterImpl
-import ru.samitin.mytranslater.presenter.Presenter
 import ru.samitin.mytranslater.view.base.BaseActivity
-import ru.samitin.mytranslater.view.base.View
 import ru.samitin.mytranslater.view.main.adapter.MainAdapter
+import ru.samitin.mytranslater.view.viewModel.MainViewModel
 
 
 class MainActivity : BaseActivity<AppState>() {
+
+    override val model: MainViewModel by lazy {
+        ViewModelProvider.NewInstanceFactory().create(MainViewModel::class.java)
+    }
+    private val observer=Observer<AppState>{renderData(it)}
 
     private lateinit var binding: ActivityMainBinding
 
@@ -29,10 +34,6 @@ class MainActivity : BaseActivity<AppState>() {
                 Toast.makeText(this@MainActivity, data.text, Toast.LENGTH_SHORT).show()
             }
         }
-
-    override fun createPresenter(): Presenter<AppState, View> {
-        return MainPresenterImpl()
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,12 +46,12 @@ class MainActivity : BaseActivity<AppState>() {
         searchDialogFragment.setOnSearchClickListener(object :
             SearchDialogFragment.OnSearchClickListener {
             override fun onClick(searchWord: String) {
-                presenter.getData(searchWord, true)
+                model.getData(searchWord,true).observe(this@MainActivity,observer)
             }
         })
         supportFragmentManager
             .beginTransaction()
-            .replace(binding.container.id,searchDialogFragment)
+            .replace(binding.fragmentContainer.id,searchDialogFragment)
             .commit()
     }
 
@@ -93,7 +94,7 @@ class MainActivity : BaseActivity<AppState>() {
         showViewError()
         binding.errorTextview.text = error ?: getString(R.string.undefined_error)
         binding.reloadButton.setOnClickListener {
-            presenter.getData("hi", true)
+            model.getData("hi", true).observe(this, observer)
         }
     }
 
