@@ -7,6 +7,7 @@ import android.widget.Toast
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import dagger.android.AndroidInjection
 
 import ru.samitin.mytranslater.R
 
@@ -16,13 +17,14 @@ import ru.samitin.mytranslater.model.data.DataModel
 import ru.samitin.mytranslater.view.base.BaseActivity
 import ru.samitin.mytranslater.view.main.adapter.MainAdapter
 import ru.samitin.mytranslater.view.viewModel.MainViewModel
+import javax.inject.Inject
 
 
 class MainActivity : BaseActivity<AppState>() {
 
-    override val model: MainViewModel by lazy {
-        ViewModelProvider.NewInstanceFactory().create(MainViewModel::class.java)
-    }
+    @Inject
+    internal lateinit var viewModelFactory: ViewModelProvider.Factory
+    override lateinit var model: MainViewModel
     private val observer=Observer<AppState>{renderData(it)}
 
     private lateinit var binding: ActivityMainBinding
@@ -36,9 +38,12 @@ class MainActivity : BaseActivity<AppState>() {
         }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        AndroidInjection.inject(this)
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        model = viewModelFactory.create(MainViewModel::class.java)
+        model.subscribe().observe(this@MainActivity, Observer<AppState> { renderData(it) })
         createSearchDialogFragment()
     }
     private fun createSearchDialogFragment(){
@@ -46,7 +51,7 @@ class MainActivity : BaseActivity<AppState>() {
         searchDialogFragment.setOnSearchClickListener(object :
             SearchDialogFragment.OnSearchClickListener {
             override fun onClick(searchWord: String) {
-                model.getData(searchWord,true).observe(this@MainActivity,observer)
+                model.getData(searchWord,true)
             }
         })
         supportFragmentManager
@@ -94,7 +99,7 @@ class MainActivity : BaseActivity<AppState>() {
         showViewError()
         binding.errorTextview.text = error ?: getString(R.string.undefined_error)
         binding.reloadButton.setOnClickListener {
-            model.getData("hi", true).observe(this, observer)
+            model.getData("hi", true)
         }
     }
 
