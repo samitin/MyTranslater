@@ -1,5 +1,6 @@
 package ru.samitin.mytranslater.di.koin
 
+import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
 import ru.samitin.mytranslater.di.NAME_LOCAL
@@ -23,5 +24,7 @@ val application = module {
 
 val mainScreen = module {
     factory { MainInteractor(get(named(NAME_REMOTE)),get(named(NAME_LOCAL))) }
-    factory { MainViewModel(get()) }
+    viewModel { MainViewModel(get()) }
 }
+
+
