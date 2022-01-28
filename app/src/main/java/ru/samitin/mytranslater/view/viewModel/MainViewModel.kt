@@ -7,9 +7,8 @@ import ru.samitin.mytranslater.model.data.AppState
 import ru.samitin.mytranslater.interactor.MainInteractor
 import ru.samitin.mytranslater.utils.parseSearchResults
 import ru.samitin.mytranslater.view.base.BaseViewModel
-import javax.inject.Inject
 
-class MainViewModel @Inject constructor(private val interactor: MainInteractor) :
+class MainViewModel (private val interactor: MainInteractor) :
     BaseViewModel<AppState>() {
 
     private var appState: AppState? = null
