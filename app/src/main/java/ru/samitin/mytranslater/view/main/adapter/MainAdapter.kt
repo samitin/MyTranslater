@@ -11,10 +11,9 @@ import ru.samitin.mytranslater.model.data.DataModel
 
 class MainAdapter(
     private var onListItemClickListener: OnListItemClickListener,
-    private var data: List<DataModel>
 ) :
     RecyclerView.Adapter<MainAdapter.RecyclerItemViewHolder>() {
-
+    private var data: List<DataModel> = arrayListOf()
     fun setData(data: List<DataModel>) {
         this.data = data
         notifyDataSetChanged()

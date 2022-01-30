@@ -5,14 +5,11 @@ import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.widget.Toast
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
-
 import org.koin.androidx.viewmodel.ext.android.viewModel
-
 import ru.samitin.mytranslater.R
-
 import ru.samitin.mytranslater.databinding.ActivityMainBinding
+import ru.samitin.mytranslater.interactor.MainInteractor
 import ru.samitin.mytranslater.model.data.AppState
 import ru.samitin.mytranslater.model.data.DataModel
 import ru.samitin.mytranslater.view.base.BaseActivity
@@ -22,29 +19,33 @@ import java.lang.IllegalStateException
 
 
 
-class MainActivity : BaseActivity<AppState>() {
-
-
-    override lateinit var model: MainViewModel
-    private val observer=Observer<AppState>{renderData(it)}
+class MainActivity : BaseActivity<AppState,MainInteractor>() {
 
     private lateinit var binding: ActivityMainBinding
+    override lateinit var model: MainViewModel
 
-    private var adapter: MainAdapter? = null
     private val onListItemClickListener: MainAdapter.OnListItemClickListener =
         object : MainAdapter.OnListItemClickListener {
             override fun onItemClick(data: DataModel) {
                 Toast.makeText(this@MainActivity, data.text, Toast.LENGTH_SHORT).show()
             }
         }
+    private val adapter: MainAdapter by lazy { MainAdapter(onListItemClickListener) }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
         initViewModel()
+        initViews()
         createSearchDialogFragment()
+    }
+    private fun initViews() {
+        binding.mainActivityRecyclerview.layoutManager = LinearLayoutManager(applicationContext)
+        binding.mainActivityRecyclerview.adapter = adapter
     }
     private fun createSearchDialogFragment(){
         val searchDialogFragment = SearchDialogFragment.newInstance()
@@ -71,19 +72,15 @@ class MainActivity : BaseActivity<AppState>() {
     override fun renderData(appState: AppState) {
         when (appState) {
             is AppState.Success -> {
-                val dataModel = appState.data
-                if (dataModel == null || dataModel.isEmpty()) {
-                    showErrorScreen(getString(R.string.empty_server_response_on_success))
+                showViewWorking()
+                val data = appState.data
+                if (data.isNullOrEmpty()) {
+                    showAlertDialog(
+                        getString(R.string.dialog_title_sorry),
+                        getString(R.string.empty_server_response_on_success)
+                    )
                 } else {
-                    showViewSuccess()
-                    if (adapter == null) {
-                        binding.mainActivityRecyclerview.layoutManager =
-                            LinearLayoutManager(applicationContext)
-                        binding.mainActivityRecyclerview.adapter =
-                            MainAdapter(onListItemClickListener, dataModel)
-                    } else {
-                        adapter!!.setData(dataModel)
-                    }
+                    adapter.setData(data)
                 }
             }
             is AppState.Loading -> {
@@ -98,11 +95,19 @@ class MainActivity : BaseActivity<AppState>() {
                 }
             }
             is AppState.Error -> {
-                showErrorScreen(appState.error.message)
+                showViewWorking()
+                showAlertDialog(getString(R.string.error_textview_stub), appState.error.message)
             }
         }
     }
 
+    private fun showViewWorking() {
+        binding.loadingFrameLayout.visibility = GONE
+    }
+
+    private fun showViewLoading() {
+        binding.loadingFrameLayout.visibility = VISIBLE
+    }
     private fun showErrorScreen(error: String?) {
         showViewError()
         binding.errorTextview.text = error ?: getString(R.string.undefined_error)
@@ -111,17 +116,6 @@ class MainActivity : BaseActivity<AppState>() {
         }
     }
 
-    private fun showViewSuccess() {
-        binding.successLinearLayout.visibility = VISIBLE
-        binding.loadingFrameLayout.visibility = GONE
-        binding.errorLinearLayout.visibility = GONE
-    }
-
-    private fun showViewLoading() {
-        binding.successLinearLayout.visibility = GONE
-        binding.loadingFrameLayout.visibility = VISIBLE
-        binding.errorLinearLayout.visibility = GONE
-    }
 
     private fun showViewError() {
         binding.successLinearLayout.visibility = GONE
