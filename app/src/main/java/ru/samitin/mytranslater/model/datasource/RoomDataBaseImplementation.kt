@@ -1,7 +1,7 @@
 package ru.samitin.mytranslater.model.datasource
 
 
-import io.reactivex.Observable
+
 import ru.samitin.mytranslater.model.data.DataModel
 
 class RoomDataBaseImplementation : DataSource<List<DataModel>> {

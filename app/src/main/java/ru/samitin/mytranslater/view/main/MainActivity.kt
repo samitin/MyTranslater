@@ -12,7 +12,9 @@ import ru.samitin.mytranslater.databinding.ActivityMainBinding
 import ru.samitin.mytranslater.interactor.MainInteractor
 import ru.samitin.mytranslater.model.data.AppState
 import ru.samitin.mytranslater.model.data.DataModel
+import ru.samitin.mytranslater.utils.convertMeaningsToString
 import ru.samitin.mytranslater.view.base.BaseActivity
+import ru.samitin.mytranslater.view.descriptionScreen.DescriptionActivity
 import ru.samitin.mytranslater.view.main.adapter.MainAdapter
 import ru.samitin.mytranslater.view.viewModel.MainViewModel
 import java.lang.IllegalStateException
@@ -27,7 +29,14 @@ class MainActivity : BaseActivity<AppState,MainInteractor>() {
     private val onListItemClickListener: MainAdapter.OnListItemClickListener =
         object : MainAdapter.OnListItemClickListener {
             override fun onItemClick(data: DataModel) {
-                Toast.makeText(this@MainActivity, data.text, Toast.LENGTH_SHORT).show()
+                startActivity(
+                    DescriptionActivity.getIntent(
+                        this@MainActivity,
+                        data.text!!,
+                        convertMeaningsToString(data.meanings!!),
+                        data.meanings[0].imageUrl
+                    )
+                )
             }
         }
     private val adapter: MainAdapter by lazy { MainAdapter(onListItemClickListener) }
