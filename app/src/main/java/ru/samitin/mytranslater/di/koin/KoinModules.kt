@@ -1,30 +1,37 @@
 package ru.samitin.mytranslater.di.koin
 
-import org.koin.androidx.viewmodel.dsl.viewModel
-import org.koin.core.qualifier.named
+import androidx.room.Room
+import geekbrains.ru.translator.room.HistoryDataBase
+
 import org.koin.dsl.module
-import ru.samitin.mytranslater.di.NAME_LOCAL
-import ru.samitin.mytranslater.di.NAME_REMOTE
-import ru.samitin.mytranslater.interactor.MainInteractor
+import ru.samitin.mytranslater.view.main.MainInteractor
 import ru.samitin.mytranslater.model.data.DataModel
 import ru.samitin.mytranslater.model.datasource.RetrofitImplementation
 import ru.samitin.mytranslater.model.datasource.RoomDataBaseImplementation
 import ru.samitin.mytranslater.model.repository.Repository
 import ru.samitin.mytranslater.model.repository.RepositoryImplementation
-import ru.samitin.mytranslater.view.viewModel.MainViewModel
+import ru.samitin.mytranslater.model.repository.RepositoryImplementationLocal
+import ru.samitin.mytranslater.model.repository.RepositoryLocal
+import ru.samitin.mytranslater.view.main.MainViewModel
+import ru.samitin.view.history.HistoryInteractor
+import ru.samitin.view.history.HistoryViewModel
 
 val application = module {
-    single <Repository<List<DataModel>>>(named(NAME_REMOTE)){
-        RepositoryImplementation(RetrofitImplementation())
-    }
-    single <Repository<List<DataModel>>>(named(NAME_LOCAL)){
-        RepositoryImplementation(RoomDataBaseImplementation())
+    single { Room.databaseBuilder(get(), HistoryDataBase::class.java, "HistoryDB").build() }
+    single { get<HistoryDataBase>().historyDao() }
+    single<Repository<List<DataModel>>> { RepositoryImplementation(RetrofitImplementation()) }
+    single<RepositoryLocal<List<DataModel>>> { RepositoryImplementationLocal(RoomDataBaseImplementation(get()))
     }
 }
 
 val mainScreen = module {
-    factory { MainInteractor(get(named(NAME_REMOTE)),get(named(NAME_LOCAL))) }
-    viewModel { MainViewModel(get()) }
+    factory { MainViewModel(get()) }
+    factory { MainInteractor(get(), get()) }
+}
+
+val historyScreen = module {
+    factory { HistoryViewModel(get()) }
+    factory { HistoryInteractor(get(), get()) }
 }
 
 

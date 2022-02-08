@@ -13,19 +13,10 @@
             android:layout_height="match_parent">
 
         <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/main_activity_recyclerview"
-                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                android:id="@+id/history_activity_recyclerview"
                 android:layout_width="match_parent"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                 android:layout_height="match_parent"/>
-
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-                android:id="@+id/search_fab"
-                android:src="@drawable/ic_search"
-                android:layout_width="wrap_content"
-                android:layout_gravity="bottom|end"
-                android:layout_marginBottom="@dimen/margin_medium"
-                android:layout_marginEnd="@dimen/margin_medium"
-                android:layout_height="wrap_content"/>
     </FrameLayout>
 
     <include layout="@layout/loading_layout"/>

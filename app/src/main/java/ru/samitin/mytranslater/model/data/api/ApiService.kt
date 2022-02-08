@@ -1,4 +1,4 @@
-package ru.samitin.mytranslater.model.datasource
+package ru.samitin.mytranslater.model.data.api
 
 
 

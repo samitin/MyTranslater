@@ -1,12 +1,10 @@
-package ru.samitin.mytranslater.view.base
+package ru.samitin.mytranslater.viewModel
 
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import io.reactivex.disposables.CompositeDisposable
 import kotlinx.coroutines.*
 import ru.samitin.mytranslater.model.data.AppState
-import ru.samitin.mytranslater.rx.SchedulerProvider
 
 abstract class BaseViewModel<T: AppState>(
     protected open val _mutableLiveData:MutableLiveData<T> =MutableLiveData(),

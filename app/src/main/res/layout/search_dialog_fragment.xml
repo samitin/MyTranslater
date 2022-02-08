@@ -3,12 +3,20 @@
         xmlns:tools="http://schemas.android.com/tools"
         android:id="@+id/bottom_sheet_dialog_layout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="205dp"
         android:orientation="vertical"
         android:fitsSystemWindows="true"
         android:layout_marginBottom="@dimen/margin_medium">
 
-
+    <TextView
+            android:id="@+id/search_button_textview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/TextViewButtonStyle"
+            android:layout_marginTop="@dimen/margin_medium"
+            android:layout_marginEnd="@dimen/margin_medium"
+            android:text="@string/button_search"
+            android:layout_gravity="end"/>
 
     <FrameLayout
             android:layout_width="match_parent"
@@ -21,13 +29,13 @@
         <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/search_input_layout"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:hint="@string/search_hint">
 
             <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/search_edit_text"
                     android:layout_width="match_parent"
-                    android:layout_height="200dp"
+                    android:layout_height="wrap_content"
                     style="@style/BaseEditTextStyle"/>
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -42,10 +50,13 @@
                 tools:visibility="visible"
                 android:contentDescription="@string/delete_description"/>
     </FrameLayout>
-    <androidx.appcompat.widget.AppCompatImageButton
-        android:id="@+id/btn_transtlate"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/ic_baseline_translate_24"
-        android:layout_gravity="end|bottom"/>
+
+
+    <!--<com.google.android.material.button.MaterialButton
+            android:layout_width="wrap_content"
+            style="@style/BaseFlatButton"
+            android:layout_height="wrap_content"
+            android:text="@string/button_search"
+            app:cornerRadius="16dp"
+            android:layout_gravity="end"/>-->
 </LinearLayout>

@@ -1,4 +1,4 @@
-package ru.samitin.mytranslater.interactor
+package ru.samitin.mytranslater.viewModel
 
 
 
