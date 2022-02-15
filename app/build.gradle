@@ -7,7 +7,6 @@ plugins {
 
 android {
     compileSdkVersion Config.compile_sdk
-    buildToolsVersion "30.0.2"
 
     defaultConfig {
         applicationId Config.application_id

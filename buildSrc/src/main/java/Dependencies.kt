@@ -3,7 +3,7 @@ import org.gradle.api.JavaVersion
 object Config {
     const val application_id = "ru.samitin.mytranslater"
     const val compile_sdk = 30
-    const val min_sdk = 24
+    const val min_sdk = 21
     const val target_sdk = 30
     val java_version = JavaVersion.VERSION_1_8
 }

@@ -2,8 +2,7 @@ package ru.samitin.mytranslater.utils.ui
 
 import android.content.Context
 import androidx.appcompat.app.AlertDialog
-import ru.samitin.mytranslater.R
-
+import ru.samitin.utils.R
 
 fun getStubAlertDialog(context: Context): AlertDialog {
     return getAlertDialog(context, null, null)

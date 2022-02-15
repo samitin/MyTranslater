@@ -7,11 +7,20 @@ import android.view.MenuItem
 import android.view.View
 import androidx.core.content.ContextCompat.startActivity
 import androidx.lifecycle.Observer
+import org.koin.android.viewmodel.compat.ScopeCompat.viewModel
+import org.koin.android.viewmodel.ext.android.viewModel
+
+import ru.samitin.core.BaseActivity
+import ru.samitin.history.view.history.HistoryActivity
+import ru.samitin.model.data.DataModel
 import ru.samitin.mytranslater.R
 import ru.samitin.mytranslater.databinding.ActivityMainBinding
+import ru.samitin.mytranslater.model.data.AppState
+
 import ru.samitin.mytranslater.view.main.adapter.MainAdapter
 import java.lang.IllegalStateException
 import ru.samitin.mytranslater.utils.convertMeaningsToString
+import ru.samitin.mytranslater.utils.network.isOnline
 import ru.samitin.mytranslater.view.descriptionScreen.DescriptionActivity
 
 
@@ -36,7 +45,7 @@ class MainActivity : BaseActivity<AppState, MainInteractor>() {
                         this@MainActivity,
                         data.text!!,
                         convertMeaningsToString(data.meanings!!),
-                        data.meanings[0].imageUrl
+                        data.meanings!![0].imageUrl
                     )
                 )
             }

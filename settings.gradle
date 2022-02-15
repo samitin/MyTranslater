@@ -1,5 +1,5 @@
 include ':repository'
-include ':historyscreen'
+include ':historyScreen'
 include ':model'
 include ':utils'
 include ':core'

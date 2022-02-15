@@ -1,9 +1,11 @@
 package ru.samitin.mytranslater.utils
 
-import geekbrains.ru.translator.room.HistoryEntity
+
+import ru.samitin.model.data.DataModel
 import ru.samitin.mytranslater.model.data.AppState
-import ru.samitin.mytranslater.model.data.DataModel
+
 import ru.samitin.mytranslater.model.data.Meanings
+import ru.samitin.repository.room.HistoryEntity
 
 
 fun parseOnlineSearchResults(appState: AppState): AppState {
@@ -49,8 +51,8 @@ private fun getSuccessResultData(
 private fun parseOnlineResult(dataModel: DataModel, newDataModels: ArrayList<DataModel>) {
     if (!dataModel.text.isNullOrBlank() && !dataModel.meanings.isNullOrEmpty()) {
         val newMeanings = arrayListOf<Meanings>()
-        for (meaning in dataModel.meanings) {
-            if (meaning.translation != null && !meaning.translation.translation.isNullOrBlank()) {
+        for (meaning in dataModel.meanings!!) {
+            if (meaning.translation != null && !meaning!!.translation?.translation.isNullOrBlank()) {
                 newMeanings.add(Meanings(meaning.translation, meaning.imageUrl))
             }
         }

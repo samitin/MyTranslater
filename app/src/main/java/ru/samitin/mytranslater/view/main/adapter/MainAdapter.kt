@@ -5,8 +5,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.activity_main_recyclerview_item.view.*
+import ru.samitin.model.data.DataModel
 import ru.samitin.mytranslater.R
-import ru.samitin.mytranslater.model.data.DataModel
+
 import ru.samitin.mytranslater.utils.convertMeaningsToString
 
 
