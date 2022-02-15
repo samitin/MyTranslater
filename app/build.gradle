@@ -6,16 +6,14 @@ plugins {
 }
 
 android {
-    compileSdkVersion 30
-    buildToolsVersion "30.0.2"
+    compileSdkVersion Config.compile_sdk
 
     defaultConfig {
-        applicationId "ru.samitin.mytranslater"
-        minSdkVersion 24
-        targetSdkVersion 30
-        versionCode 1
-        versionName "1.0"
-
+        applicationId Config.application_id
+        minSdkVersion Config.min_sdk
+        targetSdkVersion Config.target_sdk
+        versionCode Releases.version_code
+        versionName Releases.version_name
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     buildFeatures {
@@ -28,8 +26,8 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility Config.java_version
+        targetCompatibility Config.java_version
     }
     kotlinOptions {
         jvmTarget = '1.8'
@@ -37,41 +35,41 @@ android {
 }
 
 dependencies {
+    //Modules
+    implementation project(Modules.core)
+    implementation project(Modules.model)
+    implementation project(Modules.repository)
+    implementation project(Modules.utils)
+    implementation project(Modules.historyScreen) //Feature
+
     //AndroidX
-    implementation 'androidx.appcompat:appcompat:1.1.0-rc01'
+    implementation Design.appcompat
 
     //Design
     //You should not use the com.android.support and com.google.android.material dependencies in your app at the same time
-    implementation 'com.google.android.material:material:1.0.0'
+    implementation Design.material
 
     //Kotlin
-    implementation 'androidx.core:core-ktx:1.6.0'
-    implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.5.21'
-    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.3'
-    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.4.3'
-
-    //Retrofit 2
-    implementation 'com.squareup.retrofit2:retrofit:2.6.0'
-    implementation 'com.squareup.retrofit2:converter-gson:2.6.0'
-    implementation 'com.squareup.okhttp3:logging-interceptor:3.12.1'
-    implementation 'com.jakewharton.retrofit:retrofit2-kotlin-coroutines-adapter:0.9.2'
+    implementation Kotlin.core
+    implementation Kotlin.stdlib
+    implementation Kotlin.coroutines_core
+    implementation Kotlin.coroutines_android
 
     //Koin for Android
-    implementation 'org.koin:koin-android:2.1.6'
-    implementation 'org.koin:koin-android-viewmodel:2.1.6'
-
-    //Download images
-    //Coil
-    implementation 'io.coil-kt:coil:0.11.0'
+    implementation Koin.koin_android
+    implementation Koin.koin_view_model
 
     //Room
-    implementation 'androidx.room:room-runtime:2.3.0'
-    kapt 'androidx.room:room-compiler:2.3.0'
-    implementation 'androidx.room:room-ktx:2.3.0'
+    implementation Room.runtime
+    kapt Room.compiler
+    implementation Room.room_ktx
+
+    //Coil
+    implementation Coil.coil
 
     //Test
-    testImplementation 'junit:junit:4.12'
-    androidTestImplementation 'androidx.test:runner:1.2.0'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
+    testImplementation TestImpl.junit
+    androidTestImplementation TestImpl.runner
+    androidTestImplementation TestImpl.espresso
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 }

@@ -1,10 +1,11 @@
 package ru.samitin.mytranslater.view.main
 
+import ru.samitin.model.data.DataModel
 import ru.samitin.mytranslater.model.data.AppState
-import ru.samitin.mytranslater.model.data.DataModel
-import ru.samitin.mytranslater.model.repository.Repository
-import ru.samitin.mytranslater.model.repository.RepositoryLocal
+
 import ru.samitin.mytranslater.viewModel.Interactor
+import ru.samitin.repository.Repository
+import ru.samitin.repository.RepositoryLocal
 
 class MainInteractor(
     private val repositoryRemote: Repository<List<DataModel>>,

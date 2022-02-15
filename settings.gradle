@@ -1,2 +1,6 @@
+include ':repository'
+include ':historyScreen'
+include ':model'
+include ':utils'
+include ':core'
 include ':app'
-rootProject.name = "MyTranslater"
