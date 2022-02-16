@@ -1,6 +1,7 @@
 package ru.samitin.history.view.history
 
 import android.os.Bundle
+import org.koin.android.scope.currentScope
 import org.koin.android.viewmodel.ext.android.viewModel
 import ru.samitin.core.BaseActivity
 import ru.samitin.history.databinding.ActivityHistoryBinding
@@ -11,7 +12,7 @@ import ru.samitin.mytranslater.model.data.AppState
 class HistoryActivity : BaseActivity<AppState, HistoryInteractor>() {
 
     private lateinit var binding: ActivityHistoryBinding
-    override lateinit var model: HistoryViewModel
+    override val model: HistoryViewModel by currentScope.inject()
     private val adapter: HistoryAdapter by lazy { HistoryAdapter() }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -36,8 +37,6 @@ class HistoryActivity : BaseActivity<AppState, HistoryInteractor>() {
         if (binding.historyActivityRecyclerview.adapter != null) {
             throw IllegalStateException("The ViewModel should be initialised first")
         }
-        val viewModel: HistoryViewModel by viewModel()
-        model = viewModel
         model.subscribe().observe(this@HistoryActivity, { renderData(it) })
     }
 

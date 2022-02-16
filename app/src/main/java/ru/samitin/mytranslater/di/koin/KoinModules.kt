@@ -1,10 +1,14 @@
 package ru.samitin.mytranslater.di.koin
 
 import androidx.room.Room
+import org.koin.android.viewmodel.dsl.viewModel
+import org.koin.core.qualifier.named
 import org.koin.dsl.module
+import ru.samitin.history.view.history.HistoryActivity
 import ru.samitin.history.view.history.HistoryInteractor
 import ru.samitin.history.view.history.HistoryViewModel
 import ru.samitin.model.data.DataModel
+import ru.samitin.mytranslater.view.main.MainActivity
 import ru.samitin.mytranslater.view.main.MainInteractor
 import ru.samitin.mytranslater.view.main.MainViewModel
 import ru.samitin.repository.*
@@ -19,13 +23,20 @@ val application = module {
 }
 
 val mainScreen = module {
-    factory { MainViewModel(get()) }
-    factory { MainInteractor(get(), get()) }
+    scope(named<MainActivity>()) {
+        scoped { MainInteractor(get(), get()) }
+        viewModel { MainViewModel(get()) }
+    }
+
 }
 
 val historyScreen = module {
-    factory { HistoryViewModel(get()) }
-    factory { HistoryInteractor(get(), get()) }
+    scope(named<HistoryActivity>()) {
+        scoped{ HistoryInteractor(get(), get()) }
+        viewModel { HistoryViewModel(get()) }
+    }
+
+
 }
 
 
