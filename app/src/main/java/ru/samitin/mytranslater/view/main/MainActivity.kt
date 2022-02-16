@@ -7,6 +7,8 @@ import android.view.MenuItem
 import android.view.View
 import androidx.core.content.ContextCompat.startActivity
 import androidx.lifecycle.Observer
+import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import org.koin.android.scope.currentScope
 import org.koin.android.viewmodel.compat.ScopeCompat.viewModel
 import org.koin.android.viewmodel.ext.android.viewModel
@@ -23,13 +25,15 @@ import java.lang.IllegalStateException
 import ru.samitin.mytranslater.utils.convertMeaningsToString
 import ru.samitin.mytranslater.utils.network.isOnline
 import ru.samitin.mytranslater.view.descriptionScreen.DescriptionActivity
+import ru.samitin.utils.ui.viewById
 
 
 private const val BOTTOM_SHEET_FRAGMENT_DIALOG_TAG = "74a54328-5d62-46bf-ab6b-cbf5fgt0-092395"
 
 class MainActivity : BaseActivity<AppState, MainInteractor>() {
 
-    private lateinit var binding: ActivityMainBinding
+    private val mainActivityRecyclerView by viewById<RecyclerView>(R.id.main_activity_recyclerview)
+    private val searchFAB by viewById<FloatingActionButton>(R.id.search_fab)
     override val model: MainViewModel by currentScope.inject<MainViewModel>()
     private val adapter: MainAdapter by lazy { MainAdapter(onListItemClickListener) }
     private val fabClickListener: View.OnClickListener =
@@ -65,8 +69,7 @@ class MainActivity : BaseActivity<AppState, MainInteractor>() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityMainBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+        setContentView(R.layout.activity_main)
 
         iniViewModel()
         initViews()
@@ -92,14 +95,14 @@ class MainActivity : BaseActivity<AppState, MainInteractor>() {
     }
 
     private fun iniViewModel() {
-        if (binding.mainActivityRecyclerview.adapter != null) {
+        if (mainActivityRecyclerView.adapter != null) {
             throw IllegalStateException("The ViewModel should be initialised first")
         }
         model.subscribe().observe(this@MainActivity, Observer<AppState> { renderData(it) })
     }
 
     private fun initViews() {
-        binding.searchFab.setOnClickListener(fabClickListener)
-        binding.mainActivityRecyclerview.adapter = adapter
+        searchFAB.setOnClickListener(fabClickListener)
+        mainActivityRecyclerView.adapter = adapter
     }
 }
