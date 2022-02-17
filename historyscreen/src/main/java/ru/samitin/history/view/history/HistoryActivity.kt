@@ -2,10 +2,10 @@ package ru.samitin.history.view.history
 
 import android.os.Bundle
 import org.koin.android.scope.currentScope
-import org.koin.android.viewmodel.ext.android.viewModel
 import ru.samitin.core.BaseActivity
 import ru.samitin.history.databinding.ActivityHistoryBinding
 import ru.samitin.model.data.DataModel
+import ru.samitin.model.dataDto.SearchResultDto
 import ru.samitin.mytranslater.model.data.AppState
 
 

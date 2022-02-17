@@ -2,7 +2,7 @@ package ru.samitin.mytranslater.model.data
 
 import com.google.gson.annotations.SerializedName
 
-class Meanings(
-    @field:SerializedName("translation") val translation: Translation?,
+class MeaningsDto(
+    @field:SerializedName("translation") val translation: TranslationDto?,
     @field:SerializedName("imageUrl") val imageUrl: String?
 )

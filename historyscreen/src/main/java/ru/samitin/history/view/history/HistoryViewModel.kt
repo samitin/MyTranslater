@@ -2,7 +2,6 @@ package ru.samitin.history.view.history
 
 import androidx.lifecycle.LiveData
 import kotlinx.coroutines.launch
-import ru.samitin.history.parseLocalSearchResults
 import ru.samitin.mytranslater.model.data.AppState
 import ru.samitin.mytranslater.viewModel.BaseViewModel
 
@@ -23,7 +22,7 @@ class HistoryViewModel(private val interactor: HistoryInteractor) :
     }
 
     private suspend fun startInteractor(word: String, isOnline: Boolean) {
-        _mutableLiveData.postValue(parseLocalSearchResults(interactor.getData(word, isOnline)))
+        _mutableLiveData.postValue(interactor.getData(word, isOnline))
     }
 
     override fun handleError(error: Throwable) {

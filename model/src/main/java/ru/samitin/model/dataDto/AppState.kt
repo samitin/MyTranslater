@@ -1,6 +1,7 @@
 package ru.samitin.mytranslater.model.data
 
 import ru.samitin.model.data.DataModel
+import ru.samitin.model.dataDto.SearchResultDto
 
 sealed class AppState {
 

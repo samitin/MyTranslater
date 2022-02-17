@@ -1,13 +1,13 @@
 package ru.samitin.repository
 
 import ru.samitin.mytranslater.model.data.AppState
-import ru.samitin.model.data.DataModel
+import ru.samitin.model.dataDto.SearchResultDto
 
 
-class RepositoryImplementationLocal(private val dataSource: DataSourceLocal<List<DataModel>>) :
-    RepositoryLocal<List<DataModel>> {
+class RepositoryImplementationLocal(private val dataSource: DataSourceLocal<List<SearchResultDto>>) :
+    RepositoryLocal<List<SearchResultDto>> {
 
-    override suspend fun getData(word: String): List<DataModel> {
+    override suspend fun getData(word: String): List<SearchResultDto> {
         return dataSource.getData(word)
     }
 

@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.activity_history_recyclerview_item.view.*
 import ru.samitin.history.R
 import ru.samitin.model.data.DataModel
+import ru.samitin.model.dataDto.SearchResultDto
 
 
 class HistoryAdapter : RecyclerView.Adapter<HistoryAdapter.RecyclerItemViewHolder>() {
