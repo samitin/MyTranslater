@@ -8,8 +8,6 @@ import kotlinx.android.synthetic.main.activity_main_recyclerview_item.view.*
 import ru.samitin.model.data.DataModel
 import ru.samitin.mytranslater.R
 
-import ru.samitin.mytranslater.utils.convertMeaningsToString
-
 
 class MainAdapter(private var onListItemClickListener: OnListItemClickListener) :
     RecyclerView.Adapter<MainAdapter.RecyclerItemViewHolder>() {
@@ -41,7 +39,7 @@ class MainAdapter(private var onListItemClickListener: OnListItemClickListener) 
         fun bind(data: DataModel) {
             if (layoutPosition != RecyclerView.NO_POSITION) {
                 itemView.header_textview_recycler_item.text = data.text
-                itemView.description_textview_recycler_item.text = convertMeaningsToString(data.meanings!!)
+                itemView.description_textview_recycler_item.text = data.meanings[0].translatedMeaning.translatedMeaning
                 itemView.setOnClickListener { openInNewWindow(data) }
             }
         }
