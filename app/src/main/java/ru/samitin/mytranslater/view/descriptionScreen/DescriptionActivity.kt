@@ -2,9 +2,13 @@ package ru.samitin.mytranslater.view.descriptionScreen
 
 import android.content.Context
 import android.content.Intent
+import android.graphics.RenderEffect
+import android.graphics.Shader
+import android.os.Build
 import android.os.Bundle
 import android.view.MenuItem
 import android.widget.ImageView
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import coil.ImageLoader
@@ -17,7 +21,7 @@ import ru.samitin.mytranslater.utils.ui.AlertDialogFragment
 class DescriptionActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityDescriptionBinding
-
+    @RequiresApi(31)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityDescriptionBinding.inflate(layoutInflater)
@@ -42,7 +46,7 @@ class DescriptionActivity : AppCompatActivity() {
         supportActionBar?.setHomeButtonEnabled(true)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
     }
-
+    @RequiresApi(31)
     private fun setData() {
         val bundle = intent.extras
         binding.descriptionHeader.text = bundle?.getString(WORD_EXTRA)
@@ -54,7 +58,7 @@ class DescriptionActivity : AppCompatActivity() {
             useCoilToLoadPhoto(binding.descriptionImageview, imageLink)
         }
     }
-
+    @RequiresApi(31)
     private fun startLoadingOrShowError() {
         OnlineLiveData(this).observe(
             this@DescriptionActivity,
@@ -82,7 +86,7 @@ class DescriptionActivity : AppCompatActivity() {
             binding.descriptionScreenSwipeRefreshLayout.isRefreshing = false
         }
     }
-
+    @RequiresApi(31)
     private fun useCoilToLoadPhoto(imageView: ImageView, imageLink: String) {
         val request = LoadRequest.Builder(this)
             .data("https:$imageLink")
@@ -90,6 +94,10 @@ class DescriptionActivity : AppCompatActivity() {
                 onStart = {},
                 onSuccess = { result ->
                     imageView.setImageDrawable(result)
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                        val blurEffect = RenderEffect.createBlurEffect(16f, 16f, Shader.TileMode.MIRROR)
+                        imageView.setRenderEffect(blurEffect)
+                    }
                 },
                 onError = {
                     imageView.setImageResource(R.drawable.ic_load_error_vector)
