@@ -1,128 +1,153 @@
 package ru.samitin.mytranslater.view.main
 
+import android.animation.ObjectAnimator
+import android.content.Intent
+import android.os.Build
 import android.os.Bundle
-import android.view.View.GONE
-import android.view.View.VISIBLE
-import android.widget.Toast
+import android.os.CountDownTimer
+import android.view.Menu
+import android.view.MenuItem
+import android.view.View
+import android.view.ViewTreeObserver
+import android.view.animation.AnticipateInterpolator
+import androidx.annotation.RequiresApi
+import androidx.core.animation.doOnEnd
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
-import androidx.recyclerview.widget.LinearLayoutManager
-import dagger.android.AndroidInjection
-
+import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.floatingactionbutton.FloatingActionButton
+import org.koin.android.scope.currentScope
+import ru.samitin.core.BaseActivity
+import ru.samitin.history.view.history.HistoryActivity
+import ru.samitin.model.data.DataModel
+import ru.samitin.model.dataDto.SearchResultDto
 import ru.samitin.mytranslater.R
-
-import ru.samitin.mytranslater.databinding.ActivityMainBinding
 import ru.samitin.mytranslater.model.data.AppState
-import ru.samitin.mytranslater.model.data.DataModel
-import ru.samitin.mytranslater.view.base.BaseActivity
 import ru.samitin.mytranslater.view.main.adapter.MainAdapter
-import ru.samitin.mytranslater.view.viewModel.MainViewModel
-import javax.inject.Inject
+import java.lang.IllegalStateException
+import ru.samitin.mytranslater.view.descriptionScreen.DescriptionActivity
+import ru.samitin.utils.ui.viewById
 
 
-class MainActivity : BaseActivity<AppState>() {
+private const val BOTTOM_SHEET_FRAGMENT_DIALOG_TAG = "74a54328-5d62-46bf-ab6b-cbf5fgt0-092395"
 
-    @Inject
-    internal lateinit var viewModelFactory: ViewModelProvider.Factory
-    override lateinit var model: MainViewModel
-    private val observer=Observer<AppState>{renderData(it)}
+class MainActivity : BaseActivity<AppState, MainInteractor>() {
 
-    private lateinit var binding: ActivityMainBinding
-
-    private var adapter: MainAdapter? = null
+    private val mainActivityRecyclerView by viewById<RecyclerView>(R.id.main_activity_recyclerview)
+    private val searchFAB by viewById<FloatingActionButton>(R.id.search_fab)
+    override val model: MainViewModel by currentScope.inject<MainViewModel>()
+    private val adapter: MainAdapter by lazy { MainAdapter(onListItemClickListener) }
+    private val fabClickListener: View.OnClickListener =
+        View.OnClickListener {
+            val searchDialogFragment = SearchDialogFragment.newInstance()
+            searchDialogFragment.setOnSearchClickListener(onSearchClickListener)
+            searchDialogFragment.show(supportFragmentManager, BOTTOM_SHEET_FRAGMENT_DIALOG_TAG)
+        }
     private val onListItemClickListener: MainAdapter.OnListItemClickListener =
         object : MainAdapter.OnListItemClickListener {
             override fun onItemClick(data: DataModel) {
-                Toast.makeText(this@MainActivity, data.text, Toast.LENGTH_SHORT).show()
+                startActivity(
+                    DescriptionActivity.getIntent(
+                        this@MainActivity,
+                        data.text!!,
+                        data.meanings[0].translatedMeaning.translatedMeaning,
+                        data.meanings!![0].imageUrl
+                    )
+                )
+            }
+        }
+    private val onSearchClickListener: SearchDialogFragment.OnSearchClickListener =
+        object : SearchDialogFragment.OnSearchClickListener {
+            override fun onClick(searchWord: String) {
+                if (isNetworkAvailable) {
+                    model.getData(searchWord, isNetworkAvailable)
+                } else {
+                    showNoInternetConnectionDialog()
+                }
             }
         }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        AndroidInjection.inject(this)
         super.onCreate(savedInstanceState)
-        binding = ActivityMainBinding.inflate(layoutInflater)
-        setContentView(binding.root)
-        model = viewModelFactory.create(MainViewModel::class.java)
-        model.subscribe().observe(this@MainActivity, Observer<AppState> { renderData(it) })
-        createSearchDialogFragment()
+        setContentView(R.layout.activity_main)
+        setDefaultSplashScreen()
+        iniViewModel()
+        initViews()
     }
-    private fun createSearchDialogFragment(){
-        val searchDialogFragment = SearchDialogFragment.newInstance()
-        searchDialogFragment.setOnSearchClickListener(object :
-            SearchDialogFragment.OnSearchClickListener {
-            override fun onClick(searchWord: String) {
-                model.getData(searchWord,true)
-            }
-        })
-        supportFragmentManager
-            .beginTransaction()
-            .replace(binding.fragmentContainer.id,searchDialogFragment)
-            .commit()
+    private fun setDefaultSplashScreen(){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S)
+            setSplashScreenHideAnimation()
+        setSplashScreenDuration()
+    }
+    @RequiresApi(31)
+    private fun setSplashScreenHideAnimation(){
+        splashScreen.setOnExitAnimationListener { splashScreenView ->
+            val slideLeft = ObjectAnimator.ofFloat(
+                splashScreenView,
+                View.TRANSLATION_X,
+                0f,
+                -splashScreenView.height.toFloat()
+            )
+            slideLeft.interpolator = AnticipateInterpolator()
+            slideLeft.duration = 1000L
+
+            slideLeft.doOnEnd { splashScreenView.remove() }
+            slideLeft.start()
+        }
     }
 
-    override fun renderData(appState: AppState) {
-        when (appState) {
-            is AppState.Success -> {
-                val dataModel = appState.data
-                if (dataModel == null || dataModel.isEmpty()) {
-                    showErrorScreen(getString(R.string.empty_server_response_on_success))
-                } else {
-                    showViewSuccess()
-                    if (adapter == null) {
-                        binding.mainActivityRecyclerview.layoutManager =
-                            LinearLayoutManager(applicationContext)
-                        binding.mainActivityRecyclerview.adapter =
-                            MainAdapter(onListItemClickListener, dataModel)
-                    } else {
-                        adapter!!.setData(dataModel)
+    private fun setSplashScreenDuration(){
+        var isHideSplashScreen = false
+
+        object :CountDownTimer(2000,1000){
+            override fun onTick(p0: Long) {}
+            override fun onFinish() {
+                isHideSplashScreen =true
+            }
+        }.start()
+
+        val content: View = findViewById(android.R.id.content)
+        content.viewTreeObserver.addOnPreDrawListener (
+            object : ViewTreeObserver.OnPreDrawListener{
+                override fun onPreDraw(): Boolean {
+                    return if (isHideSplashScreen){
+                        content.viewTreeObserver.removeOnPreDrawListener(this)
+                        true
+                    }else{
+                        false
                     }
                 }
             }
-            is AppState.Loading -> {
-                showViewLoading()
-                if (appState.progress != null) {
-                    binding.progressBarHorizontal.visibility = VISIBLE
-                    binding.progressBarRound.visibility = GONE
-                    binding.progressBarHorizontal.progress = appState.progress
-                } else {
-                    binding.progressBarHorizontal.visibility = GONE
-                    binding.progressBarRound.visibility = VISIBLE
-                }
+        )
+    }
+
+    override fun setDataToAdapter(data: List<DataModel>) {
+        adapter.setData(data)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.history_menu, menu)
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.menu_history -> {
+                startActivity(Intent(this, HistoryActivity::class.java))
+                true
             }
-            is AppState.Error -> {
-                showErrorScreen(appState.error.message)
-            }
+            else -> super.onOptionsItemSelected(item)
         }
     }
 
-    private fun showErrorScreen(error: String?) {
-        showViewError()
-        binding.errorTextview.text = error ?: getString(R.string.undefined_error)
-        binding.reloadButton.setOnClickListener {
-            model.getData("hi", true)
+    private fun iniViewModel() {
+        if (mainActivityRecyclerView.adapter != null) {
+            throw IllegalStateException("The ViewModel should be initialised first")
         }
+        model.subscribe().observe(this@MainActivity, Observer<AppState> { renderData(it) })
     }
 
-    private fun showViewSuccess() {
-        binding.successLinearLayout.visibility = VISIBLE
-        binding.loadingFrameLayout.visibility = GONE
-        binding.errorLinearLayout.visibility = GONE
-    }
-
-    private fun showViewLoading() {
-        binding.successLinearLayout.visibility = GONE
-        binding.loadingFrameLayout.visibility = VISIBLE
-        binding.errorLinearLayout.visibility = GONE
-    }
-
-    private fun showViewError() {
-        binding.successLinearLayout.visibility = GONE
-        binding.loadingFrameLayout.visibility = GONE
-        binding.errorLinearLayout.visibility = VISIBLE
-    }
-
-    companion object {
-        private const val BOTTOM_SHEET_FRAGMENT_DIALOG_TAG =
-            "74a54328-5d62-46bf-ab6b-cbf5fgt0-092395"
+    private fun initViews() {
+        searchFAB.setOnClickListener(fabClickListener)
+        mainActivityRecyclerView.adapter = adapter
     }
 }
